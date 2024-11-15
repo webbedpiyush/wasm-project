@@ -21,7 +21,14 @@ export default function VideoInput({
   disable,
 }: VideoInputProps) {
   return (
-    <motion.div className="rounded-2xl px-4 py-3 h-fit bg-gray-100 border border-gray-200">
+    <motion.div
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.8, opacity: 0 }}
+      key={"drag"}
+      transition={{ type: "tween" }}
+      className="rounded-2xl px-4 py-3 h-fit bg-gray-100 dark:bg-black border border-gray-200"
+    >
       <div className="text-sm flex justify-between items-center border-b mb-2 pb-2">
         <p>Remove Audio</p>
         <Switch
@@ -90,7 +97,7 @@ export default function VideoInput({
                 value={videoSettings.videoType}
                 onValueChange={(value: string) => {
                   const videoType = value as VideoFormats;
-                  onVideoSettingsChange({ ...videoSettings,videoType });
+                  onVideoSettingsChange({ ...videoSettings, videoType });
                 }}
               >
                 <SelectTrigger className="w-[150px] text-sm">

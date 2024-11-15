@@ -11,7 +11,14 @@ export default function VideoDetails({
   onClear: () => void;
 }) {
   return (
-    <motion.div className="rounded-2xl px-4 py-3 h-fit bg-gray-100 border border-gray-200">
+    <motion.div
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      exit={{ scale: 0.8, opacity: 0 }}
+      key={"drag"}
+      transition={{ type: "tween" }}
+      className="rounded-2xl px-4 py-3 h-fit bg-gray-100 dark:bg-black border border-gray-200"
+    >
       <div className="flex justify-between items-center border-b mb-2 pb-2 text-sm">
         <p>Title : File Input</p>
         <Button>Clear</Button>
