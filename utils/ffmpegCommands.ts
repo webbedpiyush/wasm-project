@@ -1,5 +1,5 @@
 import { getFileExtension } from "./convert";
-import { VideoInputSettings } from "./types";
+import { VideoFormats, VideoInputSettings } from "./types";
 
 export const whatsappStatusCompressionCommand = (
   input: string,
@@ -60,9 +60,23 @@ export const customVideoCompressionCommand = (
   input: string,
   output: string,
   videoSettings: VideoInputSettings
-) => {
+): string[] => {
   const inputType = getFileExtension(input);
   if (inputType === "mp4") {
+    return getMP4ToMP4Command(input, output, videoSettings);
+  } else {
+    switch (videoSettings.videoType) {
+      case VideoFormats.MP4:
+        return getMP4Command(input, output, videoSettings);
+      case VideoFormats.AVI:
+        return getAVICommand(input, output, videoSettings);
+      case VideoFormats.MKV:
+        return getMKVCommand(input, output, videoSettings);
+      case VideoFormats.MOV:
+        return getMOVCommand(input, output, videoSettings);
+      default:
+        return ["-i", input, output];
+    }
   }
 };
 
