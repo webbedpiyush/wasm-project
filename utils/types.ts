@@ -7,7 +7,7 @@ export interface FileActions {
   isError?: boolean;
   url?: string;
   output?: any;
-  outputBlob?: boolean;
+  outputBlob?: Blob;
 }
 
 export enum QualityType {

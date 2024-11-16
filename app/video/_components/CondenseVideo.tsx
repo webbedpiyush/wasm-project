@@ -2,7 +2,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { CustomDropZone } from "./CustomDropzone";
 import { acceptedVideoFiles } from "@/utils/formats";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   FileActions,
   QualityType,
@@ -14,12 +14,18 @@ import VideoDetails from "./VideoDetails";
 import VideoTrim from "./VideoTrim";
 import VideoInput from "./VideoInput";
 import { FFmpeg } from "@ffmpeg/ffmpeg";
+import { toBlobURL } from "@ffmpeg/util";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
+import convertFile from "@/utils/convert";
+import VideoProgress from "./VideoProgress";
+import VideoOutput from "./VideoOutput";
 
 export default function CondenseVideo() {
+  const { toast } = useToast();
   const [progress, setProgress] = useState<number>(0);
   const [time, setTime] = useState<{
-    startTime?: number;
+    startTime?: Date;
     elapsedSeconds?: number;
   }>({ elapsedSeconds: 0 });
   const [status, setStatus] = useState<
@@ -50,6 +56,88 @@ export default function CondenseVideo() {
   const ffmpegRef = useRef(new FFmpeg());
 
   const disableDuringCompression = status === "condensing";
+
+  const load = async () => {
+    const ffmpeg = ffmpegRef.current;
+    await ffmpeg.load({
+      coreURL: await toBlobURL(
+        `http://localhost:3000/download/ffmpeg-core.js`,
+        "text/javascript"
+      ),
+      wasmURL: await toBlobURL(
+        `http://localhost:3000/download/ffmpeg-core.wasm`,
+        "application/wasm"
+      ),
+    });
+  };
+
+  const loadWithToast = async () => {
+    try {
+      await load();
+
+      toast({
+        title: "Download Successfully",
+        description:
+          "All necessary files have been downloaded for offline use.",
+        variant: "default",
+        duration: 5000,
+      });
+    } catch (error) {
+      toast({
+        title: "Error downloading FFmpeg packages",
+        description:
+          "An issue occured while downloading the necessary packages.",
+        variant: "destructive",
+        duration: 5000,
+      });
+    }
+  };
+
+  useEffect(function () {
+    loadWithToast();
+  }, []);
+
+  const condense = async () => {
+    if (!videoFile) return;
+    try {
+      setTime({ ...time, startTime: new Date() });
+      setStatus("condensing");
+      ffmpegRef.current.on("progress", ({ progress: completion, time }) => {
+        const percentage = completion * 100;
+        setProgress(percentage);
+      });
+
+      ffmpegRef.current.on("log", ({ message }) => {
+        console.log(message);
+      });
+
+      const { url, output, outputBlob } = await convertFile(
+        ffmpegRef.current,
+        videoFile,
+        videoSettings
+      );
+
+      setVideoFile({
+        ...videoFile,
+        url,
+        output,
+        outputBlob,
+      });
+      setTime((oldTime) => ({ ...oldTime, startTime: undefined }));
+      setStatus("converted");
+      setProgress(0);
+    } catch (error) {
+      console.log(error);
+      setStatus("notStarted");
+      setProgress(0);
+      setTime({ elapsedSeconds: 0, startTime: undefined });
+      toast({
+        title: "Error condensing video",
+        variant: "destructive",
+        duration: 5000,
+      });
+    }
+  };
 
   return (
     <>
@@ -97,11 +185,20 @@ export default function CondenseVideo() {
               transition={{ type: "tween" }}
               className="bg-gray-100 dark:bg-black border-gray-200 rounded-2xl p-3 h-fit"
             >
-              {(status === "notStarted" || status === "converted") && (
-                <Button>Condense</Button>
+              {status === "condensing" && (
+                <VideoProgress
+                  progress={progress}
+                  seconds={time.elapsedSeconds!}
+                />
               )}
-             
+              {(status === "notStarted" || status === "converted") && (
+                <Button onClick={condense}>Condense</Button>
+              )}
             </motion.div>
+            <VideoOutput
+              timeTaken={time.elapsedSeconds!}
+              videoFile={videoFile!}
+            />
           </div>
         </motion.div>
       </AnimatePresence>
