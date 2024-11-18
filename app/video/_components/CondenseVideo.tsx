@@ -139,6 +139,20 @@ export default function CondenseVideo() {
     }
   };
 
+  useEffect(
+    function () {
+      let timer: NodeJS.Timeout;
+
+      timer = setInterval(() => {
+        const endTime = new Date();
+        const TimeDifference = endTime.getTime() - time?.startTime!?.getTime();
+        setTime({ ...time, elapsedSeconds: TimeDifference });
+      }, 1000);
+      return () => clearInterval(timer);
+    },
+    [time]
+  );
+
   return (
     <>
       <motion.div
@@ -172,11 +186,11 @@ export default function CondenseVideo() {
                 />
               </>
             )}
-            <VideoInput
+            { status === "notStarted" && videoFile && (< VideoInput
               disable={disableDuringCompression}
               onVideoSettingsChange={setVideoSettings}
               videoSettings={videoSettings}
-            />
+            />)}
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
@@ -195,10 +209,12 @@ export default function CondenseVideo() {
                 <Button onClick={condense}>Condense</Button>
               )}
             </motion.div>
-            <VideoOutput
-              timeTaken={time.elapsedSeconds!}
-              videoFile={videoFile!}
-            />
+            {status === "converted" && videoFile && (
+              <VideoOutput
+                timeTaken={time.elapsedSeconds!}
+                videoFile={videoFile!}
+              />
+            )}
           </div>
         </motion.div>
       </AnimatePresence>

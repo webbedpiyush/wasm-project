@@ -16,14 +16,14 @@ export default function VideoOutput({
   videoFile: FileActions;
   timeTaken: number;
 }) {
-  const outputFileSize = calculateBlobSize(videoFile.outputBlob);
+  const outputFileSize = calculateBlobSize(videoFile?.outputBlob);
   const { sizeReduced, percentage } = reduceSize(
-    videoFile.fileSize,
-    videoFile.outputBlob
+    videoFile?.fileSize,
+    videoFile?.outputBlob
   );
 
   const download = () => {
-    if (videoFile.url) return;
+    if (!videoFile.url) return;
 
     const a = document.createElement("a");
     a.style.display = "none";
@@ -46,30 +46,32 @@ export default function VideoOutput({
       className="bg-gray-100 dark:bg-black border-gray-200 rounded-2xl p-3 h-fit"
     >
       <div className="text-sm">
-        <div>
-          <p>Output File</p>
-          <HiBadgeCheck />
+        <div className="flex justify-between items-center border-b mb-2 pb-2">
+          <div className="flex items-center gap-1">
+            <p>Output File</p>
+            <HiBadgeCheck />
+          </div>
           <Button onClick={download}>Download</Button>
         </div>
-        <div>
-          <p>New File Size</p>
-          <p>{outputFileSize}</p>
+        <div className="flex justify-between items-center border-b mb-2 pb-2">
+          <p className="font-semibold">New File Size</p>
+          <p className="font-semibold">{outputFileSize}</p>
         </div>
-        <div>
-          <p>Size Reduced %</p>
-          <p>{percentage}</p>
+        <div className="flex justify-between items-center border-b mb-2 pb-2">
+          <p className="font-semibold">Size Reduced %</p>
+          <p className="font-semibold">{percentage}</p>
         </div>
-        <div>
-          <p>Original file size</p>
-          <p>{bytesToSize(videoFile.fileSize)}</p>
+        <div className="flex justify-between items-center border-b mb-2 pb-2">
+          <p className="font-semibold">Original file size</p>
+          <p className="font-semibold">{bytesToSize(videoFile?.fileSize)}</p>
         </div>
-        <div>
-          <p>Size Reduced</p>
-          <p>{sizeReduced}</p>
+        <div className="flex justify-between items-center border-b mb-2 pb-2">
+          <p className="font-semibold">Size Reduced</p>
+          <p className="font-semibold">{sizeReduced}</p>
         </div>
-        <div>
-          <p>Time taken</p>
-          <p>{timeTaken ? formatTime(timeTaken / 1000) : "-"}</p>
+        <div className="flex justify-between items-center border-b mb-2 pb-2">
+          <p className="font-semibold">Time taken</p>
+          <p className="font-semibold">{timeTaken ? formatTime(timeTaken / 1000) : "-"}</p>
         </div>
       </div>
     </motion.div>

@@ -23,7 +23,9 @@ export default async function convertFile(
   videoSettings: VideoInputSettings
 ) {
   const { file, fileName, fileType } = actionFile;
-  const output = `${removeFileExtension(fileName)}.${videoSettings.videoType}`;
+  const output = `${removeFileExtension(fileName)}_converted.${
+    videoSettings.videoType
+  }`;
   ffmpeg.writeFile(fileName, await fetchFile(file));
 
   const command = videoSettings.twitterCompressionCommand
