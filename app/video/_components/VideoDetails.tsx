@@ -21,7 +21,7 @@ export default function VideoDetails({
     >
       <div className="flex justify-between items-center border-b mb-2 pb-2 text-sm">
         <p>Title : File Input</p>
-        <Button onClick={() => window.location.reload()}>Clear</Button>
+        <Button onClick={onClear}>Clear</Button>
       </div>
       <p className="border-b mb-2 pb-2">{videoFile?.fileName}</p>
       <div className="flex justify-between items-center">

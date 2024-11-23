@@ -178,7 +178,10 @@ export default function CondenseVideo() {
           <div className="flex flex-col gap-4 w-full">
             {videoFile && (
               <>
-                <VideoDetails videoFile={videoFile} onClear={() => {}} />
+                <VideoDetails
+                  videoFile={videoFile}
+                  onClear={() => window.location.reload()}
+                />
                 <VideoTrim
                   disabled={disableDuringCompression}
                   onVideoSettingsChange={setVideoSettings}
@@ -186,11 +189,13 @@ export default function CondenseVideo() {
                 />
               </>
             )}
-            { status === "notStarted" && videoFile && (< VideoInput
-              disable={disableDuringCompression}
-              onVideoSettingsChange={setVideoSettings}
-              videoSettings={videoSettings}
-            />)}
+            {status === "notStarted" && videoFile && (
+              <VideoInput
+                disable={disableDuringCompression}
+                onVideoSettingsChange={setVideoSettings}
+                videoSettings={videoSettings}
+              />
+            )}
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}

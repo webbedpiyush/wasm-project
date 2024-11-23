@@ -1,5 +1,6 @@
 import Link from "next/link";
 import ThemeSwitcher from "./ThemeSwitcher";
+import { FaGithub } from "react-icons/fa";
 
 export default function Navbar() {
   return (
@@ -10,7 +11,6 @@ export default function Navbar() {
         </Link>
         <div className="sm:flex gap-4 items-center"></div>
         <div className="flex justify-end items-center gap-3">
-          
           <Link
             href="/video"
             className="bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-zinc-700 via-zinc-950 to-zinc-950 
@@ -19,6 +19,9 @@ export default function Navbar() {
             Condense Now
           </Link>
           <ThemeSwitcher />
+          <Link href="https://github.com/webbedpiyush/wasm-project" target="_blank">
+            <FaGithub className="hidden sm:block w-9 h-9" />
+          </Link>
         </div>
       </div>
     </nav>
