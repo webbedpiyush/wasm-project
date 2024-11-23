@@ -61,11 +61,11 @@ export default function CondenseVideo() {
     const ffmpeg = ffmpegRef.current;
     await ffmpeg.load({
       coreURL: await toBlobURL(
-        `http://localhost:3000/download/ffmpeg-core.js`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/download/ffmpeg-core.js`,
         "text/javascript"
       ),
       wasmURL: await toBlobURL(
-        `http://localhost:3000/download/ffmpeg-core.wasm`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/download/ffmpeg-core.wasm`,
         "application/wasm"
       ),
     });
